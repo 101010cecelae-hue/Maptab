@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Jemulpo Map V2</title>
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: -apple-system, sans-serif;
+  background: linear-gradient(#dfe9f3, #ffffff);
+}
+
+.scene {
+  width: 100vw;
+  height: 100vh;
+  perspective: 1400px;
+}
+
+.map {
+  width: 1200px;
+  height: 1200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateX(60deg) rotateZ(-25deg);
+  background: #f8f8f8;
+  border-radius: 40px;
+}
+
+/* Roads */
+.road {
+  position: absolute;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* Buildings */
+.building {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(145deg, #e0e0e0, #cfcfcf);
+  border-radius: 10px;
+  transform: translateZ(30px);
+  box-shadow: 0 20px 30px rgba(0,0,0,0.25);
+}
+
+/* Trees */
+.tree {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: green;
+  border-radius: 50%;
+}
+
+/* Markers */
+.marker {
+  position: absolute;
+  padding: 6px 10px;
+  background: white;
+  border-radius: 15px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+/* Route */
+.route {
+  position: absolute;
+  height: 6px;
+  background: #007aff;
+  border-radius: 10px;
+  width: 0;
+  transition: width 1s ease;
+}
+
+/* UI */
+.ui {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.3);
+  backdrop-filter: blur(20px);
+  padding: 15px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+  <div class="map">
+
+    <!-- Roads -->
+    <div class="road" style="width:800px;height:30px;top:500px;left:200px;"></div>
+    <div class="road" style="width:30px;height:600px;top:200px;left:600px;"></div>
+
+    <!-- Buildings -->
+    <div class="building" style="top:420px;left:400px;"></div>
+    <div class="building" style="top:480px;left:500px;"></div>
+
+    <!-- Trees -->
+    <div class="tree" style="top:450px;left:300px;"></div>
+    <div class="tree" style="top:550px;left:700px;"></div>
+
+    <!-- Markers -->
+    <div class="marker" style="top:520px;left:350px;" onclick="selectStart()">🏮 Chinatown</div>
+    <div class="marker" style="top:480px;left:750px;" onclick="selectEnd()">🎪 Festival</div>
+
+    <!-- Route -->
+    <div id="route" class="route" style="top:510px;left:350px;"></div>
+
+  </div>
+</div>
+
+<div class="ui" onclick="drawRoute()">Start Navigation</div>
+
+<script>
+let start=false, end=false;
+
+function selectStart(){ start=true; }
+function selectEnd(){ end=true; }
+
+function drawRoute(){
+  if(start && end){
+    document.getElementById("route").style.width="400px";
+  } else {
+    alert("Select both points");
+  }
+}
+</script>
+
+</body>
+</html>
