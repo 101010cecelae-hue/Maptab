@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Real 3D Jemulpo Map</title>
+<style>
+body { margin:0; overflow:hidden; }
+#ui {
+  position:absolute;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,0.2);
+  backdrop-filter:blur(20px);
+  padding:15px 25px;
+  border-radius:25px;
+  font-family:-apple-system;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="ui" onclick="drawRoute()">Start Navigation</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.158/build/three.min.js"></script>
+
+<script>
+// Scene
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf0f0f0);
+
+// Camera
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 1000);
+camera.position.set(0, 200, 300);
+
+// Renderer
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Light
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(100,200,100);
+scene.add(light);
+
+// Ground
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(500,500),
+  new THREE.MeshStandardMaterial({color:0xf5f5f5})
+);
+ground.rotation.x = -Math.PI/2;
+scene.add(ground);
+
+// Roads
+function road(x,z,w,h){
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(w,1,h),
+    new THREE.MeshStandardMaterial({color:0xffffff})
+  );
+  mesh.position.set(x,0.5,z);
+  scene.add(mesh);
+}
+road(0,0,400,20);
+road(0,0,20,300);
+
+// Buildings
+function building(x,z,height){
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(30,height,30),
+    new THREE.MeshStandardMaterial({color:0xcccccc})
+  );
+  mesh.position.set(x,height/2,z);
+  scene.add(mesh);
+}
+building(-50,0,60);
+building(50,50,80);
+building(100,-40,50);
+
+// Markers
+const start = new THREE.Mesh(
+  new THREE.SphereGeometry(5),
+  new THREE.MeshBasicMaterial({color:0xff0000})
+);
+start.position.set(-120,5,0);
+scene.add(start);
+
+const end = new THREE.Mesh(
+  new THREE.SphereGeometry(5),
+  new THREE.MeshBasicMaterial({color:0x0000ff})
+);
+end.position.set(150,5,50);
+scene.add(end);
+
+// Route
+let route;
+function drawRoute(){
+  const points = [
+    new THREE.Vector3(-120,5,0),
+    new THREE.Vector3(0,5,0),
+    new THREE.Vector3(80,5,20),
+    new THREE.Vector3(150,5,50)
+  ];
+
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const material = new THREE.LineBasicMaterial({color:0x007aff});
+  route = new THREE.Line(geometry, material);
+  scene.add(route);
+}
+
+// Controls (rotate)
+let angle = 0;
+document.addEventListener("mousemove", (e)=>{
+  if(e.buttons===1){
+    angle += e.movementX * 0.005;
+    camera.position.x = Math.sin(angle)*300;
+    camera.position.z = Math.cos(angle)*300;
+    camera.lookAt(0,0,0);
+  }
+});
+
+// Animate
+function animate(){
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+
+</body>
+</html>
